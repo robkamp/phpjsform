@@ -14,7 +14,7 @@ class form {
   private $content;
   private $renderPdf=false;
   private $data;
-  private $keywords=array('checkbox','radioset','datepicker','fill-in','dropdown','fileupload','submit','location','debug','disclaimer');
+  private $keywords=array('language','language_other','data','checkbox','radioset','datepicker','fill-in','dropdown','fileupload','submit','location','debug','disclaimer');
   private $errors=array();
   private $replaceStack=array();
   private $countries;
@@ -46,10 +46,12 @@ class form {
       $this->afternoon2 = new dataArray('afternoon2');
       $this->morning = new dataArray('morning');
 
-//			if ($_SERVER['HTTP_HOST']=='uiss.nl.eu.org') {
-//				$this->emailSettings['from']='rob@kamp.nl.eu.org';
-//				$this->debug = true;
-//			}
+      
+      
+			if ($_SERVER['HTTP_HOST']=='uiss') {
+				$this->emailSettings['from']='rob@localhost';
+				$this->debug = true;
+			}
 			
     } else {
       die(sprintf("Form %s does not exist",$form));
@@ -58,107 +60,128 @@ class form {
 
   function parse ($method='get') {
 
-		// In een class moet deze code in de class staan. 
-		// Niet erbuiten, dan wordt er namelijk al output gedaan naar de client
-		date_default_timezone_set('UTC');  
+		date_default_timezone_set('UTC');  // Set the timezone to be UTC, must be here inside the class
 
-    
-    
-		switch ($method) {
-			case 'post': {
-				$this->data=array_merge($_REQUEST,$_SESSION);
-				$content = file_get_contents($this->pdf);
-        $this->filename = sprintf('%s%s_%s_%s_%s',DATA_PATH,$_SESSION['DATETIME'],$this->data['family_name'],$this->data['first_name'],$this->data['date_of_birth']);
-				$this->renderPdf=true;
+		switch ($method) { // Depending on the method
+			case 'post': { // for post 
+				$this->data=array_merge($_REQUEST,$_SESSION); // Merge the session data with the request data
+        $this->trimData(); // Trim All data in the array 
+				$content = file_get_contents($this->pdf); // Get the contents for generating the PDF
+        // prepare the filename without special characters
+        $this->filename = utils::postSlug(sprintf('%s_%s_%s_%s',$_SESSION['DATETIME'],$this->data['family_name'],$this->data['first_name'],$this->data['date_of_birth'])); 
+        $this->filename = sprintf('%s%s',DATA_PATH,$this->filename); // prepend the path for the data directory
+				$this->renderPdf=true; // This time around we render the PDF
         // Now that we are rendering the PDF we should move 
         // the image from its temporary name to its final name
-        rename (RELATIVE_PATH.DATA_PATH.$_SESSION['GUID'].'.jpg',RELATIVE_PATH.$this->filename.'.jpg');
+        // rename (RELATIVE_PATH.DATA_PATH.$_SESSION['GUID'].'.jpg',RELATIVE_PATH.$this->filename.'.jpg');
+        rename ($_SESSION['Photo'],RELATIVE_PATH.$this->filename.'.jpg'); // rename/move the resized photo
+        rename ($_SESSION['OriginalPhoto'],RELATIVE_PATH.$this->filename.'_original.'.$_SESSION['OriginalExtension']); // move the original photo
 				break;
 			}
-			case 'get': {
-        // We just did a get 
-        $_SESSION['GUID']=utils::uuid();
-        $_SESSION['DATETIME']=date('YmdHi');
-				$content = file_get_contents($this->form);
-				$this->renderPdf=false;
-        $this->data=array();
-				break;
+			case 'get': { // for get
+        $_SESSION['GUID']=utils::uuid(); // Determine the GUID
+        $_SESSION['DATETIME']=date('YmdHi'); // Set the date and time we started this session
+				$content = file_get_contents($this->form); // Get the form we have to parse 
+				$this->renderPdf=false; // Do not render the PDF this time 
+        $this->data=array(); // Prepare a clean data array
+				break; 
 			}
     }
+
+    $this->data['location']=$this->location; // remember the location 
+    $this->data['filename']=$this->filename; // remember the filneame
+    $this->data['cache_limiter']=session_cache_limiter(); // what cache limiter is used
+    $this->data['cache_expire']=session_cache_expire(); // when should the session expire 
+    $this->data['HTTP_USER_AGENT']=$_SERVER['HTTP_USER_AGENT']; // what agent did connect to us
     
-    if (isset($_REQUEST['debug'])&&$_REQUEST['debug']=='2wsxCDE') {
-      $this->debug = true;
+    if (isset($_REQUEST['debug'])&&$_REQUEST['debug']=='2wsxCDE') { // Debugging mode only with a password
+      $this->debug = true; // Debugging is on
     }
 
-    $tokens=preg_split('/{|}/',$content);
+    $tokens=preg_split('/{|}/',$content); // Split the content into tokens, wow a one operation tokenizer, this takes about one a4 worth of code in Progress ABL
 
-    foreach ($tokens as $key=>$token) {
-      $keyword='';
-      $name='';
-      $value='';
-			$default='';
-			$label='';
-      switch (count(split(" ",$token))) {
-        case 0:
-          throw new Exception('Cannot render token '.$token);
+    foreach ($tokens as $key=>$token) { // Walk to tokens
+      $keyword=''; // initialize the keyword 
+      $name=''; // initialize the name
+      $value=''; // initialize the value
+			$default=''; // initialize the default
+			$label=''; // initialize the label
+      
+      switch (count(preg_split('/ /',$token))) { // Based on the number of tokens within a token
+        case 0: 
+          throw new Exception('Cannot render token '.$token); // We cannot render a token that only exists of {}
           break;
-        case 1:
-          $keyword = $token;
+        case 1: 
+          $keyword = $token; // The token is a single keyword without parameters
           break;
         case 2:
-          list($keyword,$name) = split(" ",$token);
+          list($keyword,$name) = preg_split('/ /',$token); // Split the token in a keyword and a name
           break;
         default:
-          list($keyword,$name,$value) = split(" ",$token,3);
+          list($keyword,$name,$value) = preg_split('/ /',$token,3); // Split the token in a keyword and a name and a value that is the 3rd and consecutive tokens
           break;
       }
 			
-      if (in_array($keyword,$this->keywords)) {
+      if (in_array($keyword,$this->keywords)) { // Handle the keywords, pass token to all renderers as they replace the token with the rendered content
         switch ($keyword) {
           case 'debug':
-            $this->debuginfo($token);
+            $this->debuginfo($token); // write debugging info to the form 
             break;
           case 'disclaimer': 
-            $this->disclaimer($token);
+            $this->disclaimer($token); // write a disclaimer to the form, ie sucks
             break;
           case 'location':
-            $this->location($token);
+            $this->location($token); // write the location to the form
             break;
           case 'fileupload':
-            $this->fileupload($token,$name);
+            $this->fileupload($token,$name); // write a fileupload dialog to the form
             break;
           case 'checkbox':
-	          list($keyword,$name,$value) = split(" ",$token,3);
-            $this->checkbox($token,$name,$value);
+            $this->checkbox($token,$name,$value); // write a checkbox to the form
             break;
           case 'radioset':
- 						list($keyword,$name,$value,$label) = split(" ",$token,4);
-            $this->radioset($token,$name,$value,$label);
+ 						list($keyword,$name,$value,$label) = preg_split('/ /',$token,4); // A radio set has four parameters 
+            $this->radioset($token,$name,$value,$label); // write the radio set to the form
             break;
           case 'datepicker':
-            $this->datepicker($token,$name);
+            $this->datepicker($token,$name); // Write a datepicker to the form
             break;
+          case 'language_other':
+            $this->language_other($token,$name); // Write another language to the form, only called in renderPdf mode
+          break;
+          case 'language':
+            list($keyword,$name,$label) = preg_split('/ /',$token,3); // for language the third parameters is its label
+            $this->language($token,$name,$label); // Write another language to the form, only called in renderPdf mode
+          break;
+          case 'data':
+            $this->data($token,$name); // Write the data of an element to the form, only called in renderPdf mode 
+          break;
           case 'fill-in':
-            $this->fillin($token,$name);
+            if ($this->renderPdf) { // Fill ins work different in renderPdf mode
+              list($keyword,$name,$label) = preg_split('/ /',$token,3); // The third parameter is the label
+              $this->fillin($token,$name,$label); // render the fill in 
+            } else {
+              $this->fillin($token,$name); // render the fill in
+            }
             break;
           case 'dropdown':
-						switch((count(split(" ",$token)))) {
+						switch((count(preg_split('/ /',$token)))) { // We have different tastes of dropdowns
 							case 0:
 							case 1:
 							case 2:
-							  die($token);
+							  die($token); // We cannot render dropdowns with 0, 1 or 2 parameters
 							break;
 							case 3:
-								list($keyword,$name,$value) = split(" ",$token);
-		            $this->dropdown($token,$name,$value);
+								list($keyword,$name,$value) = preg_split('/ /',$token); // The third tokens is the value
+		            $this->dropdown($token,$name,$value); // render the dropdown
 							break;
 							case 4:
-								list($keyword,$name,$value,$default) = split(" ",$token);
-		            $this->dropdown($token,$name,$value,$default);
+								list($keyword,$name,$value,$default) = preg_split('/ /',$token); // the fourth parameter is the default 
+		            $this->dropdown($token,$name,$value,$default); // render the dropdown 
 							break;
 							default: 
-								list($keyword,$name,$value,$default,$label) = split(" ",$token,5);
-		            $this->dropdown($token,$name,$value,$default,$label);
+								list($keyword,$name,$value,$default,$label) = preg_split('/ /',$token,5); // the fifth and consecutive parameter is the label 
+		            $this->dropdown($token,$name,$value,$default,$label); // render the dropdown
 							break;
 						}
             break;
@@ -178,38 +201,36 @@ class form {
 		
     if ($this->renderPdf) {
       $dat = '';
-      foreach ($this->data as $key=>$value) {
-        $dat.=sprintf('%s=%s'.chr(10),$key,$value);
+      foreach ($this->data as $key=>$value) { // Walk all items in the data
+        $dat.=sprintf('%s=%s'.chr(10),$key,$value); // Generate the data file contents
       };
-      $dat.=sprintf('%s=%s'.chr(10),'location',$this->location);
-      $dat.=sprintf('%s=%s'.chr(10),'filename',$this->filename);
-      $dat.=sprintf('%s=%s'.chr(10),'HTTP_USER_AGENT',$_SERVER['HTTP_USER_AGENT']);
-			// $dat =join(';',array_keys($this->data)).';location'.chr(10);
-      // $dat.=join(';',$this->data).';'.$this->location;
-      $file=sprintf('%s%s',RELATIVE_PATH,$this->filename);
+      $filebase=sprintf('%s%s',RELATIVE_PATH,$this->filename); // Create the base filename
+			
+      file_put_contents($filebase.'.dat',$dat); // Save the contents of the data
       
-			file_put_contents($file.'.dat',$dat);
-      if ($this->debug) {
-        file_put_contents(RELATIVE_PATH.DATA_PATH.$_SESSION['GUID'].'.html',$content);
-      }
+      // Before we work any further on the content 
+      // we remove all superfluous whitespace 
+      $content = utils::removeWhitespace($content);
+      
+      file_put_contents($filebase.'.html',$content); // Save the HTML that is used for generating the PDF
 			
-			$this->pdf_create($file.'.pdf',$content);
-      $this->sendMailDirector($file.'.pdf',$file.'.dat',$file.'.jpg');
-      $this->sendMailStudent($file.'.pdf');
+			$this->pdf_create($filebase); // Generate the PDF 
+      
+      $this->sendMailDirector($filebase.'.pdf',$filebase.'.dat',$filebase.'.jpg'); // Send an email to the Director
+      $this->sendMailStudent($filebase.'.pdf'); // Send an email to the student 
 			
-      $content = file_get_contents($this->finished);
-			foreach ($this->replaceStack as $search=>$replace) {
-				$content=str_replace('{'.$search.'}',$replace,$content);
+      $content = file_get_contents($this->finished); // Get the contents for the OK screen
+			foreach ($this->replaceStack as $search=>$replace) { // Walk all items in the stack
+				$content=str_replace('{'.$search.'}',$replace,$content);  // Replace the items
 			}
-			
-      session_destroy();
+      session_destroy(); // Destroy the session
     } 
-    print $content;
+    print $content; // Send the content to the browser
   }
 
   function debuginfo($token) {
     if ($this->debug) { 
-      $this->replaceStack[$token]=sprintf('<p class="disclaimer">debugging mode an extra html file will be generated in %s.html</p>',$_SESSION['GUID']);
+      $this->replaceStack[$token]=sprintf('<p class="disclaimer">Debugging mode. Session number is "%s".</p>',$_SESSION['GUID']);
     } else {
       $this->replaceStack[$token]='';
     }
@@ -222,7 +243,6 @@ class form {
       $this->replaceStack[$token]='';
     }
   }
-    
   
   function sendMailStudent($pdffile) {
 
@@ -283,7 +303,11 @@ class form {
     if ($this->renderPdf) {
 			$photo=sprintf('%s%s.jpg',$this->location,$this->filename);
 			list($width,$height,$type,$flag) = getimagesize($photo);
-			$this->replaceStack[$token]=sprintf('<img id="photo" name="photo" src="%s" style="width: %dpx; height: %dpx;"/>',$photo,$width,$height);
+      if ($width == 0 && $height == 0)  {
+        die("Something went wrong while rendering your photo, please send a mail to director@uiss.org about this error.");
+      } else {
+			  $this->replaceStack[$token]=sprintf('<img id="photo" name="photo" src="%s" style="width: %dpx; height: %dpx;"/>',$photo,$width,$height);
+      }
     } else {
       $this->replaceStack[$token]=sprintf('<div style="width: 35mm; height:45mm; border: black solid 1px;" id="photoarea"></div>');
     }
@@ -294,7 +318,6 @@ class form {
       if(isset($this->data[$name])&&$this->data[$name]==$value) {
         $this->replaceStack[$token]=sprintf('<tr><td>%s</td></tr>',$label);
       } 
-	    // Do not show the unchecked options for a radioset
 	    else {
         $this->replaceStack[$token]='';
       }
@@ -304,14 +327,14 @@ class form {
   }
 
   function dropdown ($token,$name,$values,$default='choose',$label='') {
-		$valueArray=split(',',$values);
+		$valueArray=preg_split('/,/',$values);
 	  $combobox=$valueArray[0];
     if ($this->renderPdf) {
 			if ($this->data[$name]!=$default) {
-				if ($label=='') {
+				if (empty($label)) {
 					$this->replaceStack[$token]=$this->$combobox->printValue($this->data[$name]);
 				} else {
-					$this->replaceStack[$token]=sprintf('<tr><td>%s %s</td></tr>',$label,$this->$combobox->printValue($this->data[$name]));
+          $this->replaceStack[$token]=sprintf('<tr><th>%s</th><td>%s</td></tr>',$label,$this->$combobox->printValue($this->data[$name]));
 				}
 			} else {
 				$this->replaceStack[$token]='';
@@ -329,7 +352,7 @@ class form {
   function checkbox ($token,$name,$value) {
     if (($this->renderPdf)) {
       if (isset($this->data[$name])&&$this->data[$name]=='true') {
-        $this->replaceStack[$token]=sprintf('%s',$value);
+        $this->replaceStack[$token]=sprintf('<tr><th>%s</th></tr>',$value);
       } else {
         $this->replaceStack[$token]='';
       }
@@ -351,12 +374,74 @@ class form {
 		}
 	}
 
-  function fillin ($token,$name) {
+  function data ($token,$name) {
+    if ($this->renderPdf && isset($this->data[$name])) {
+      $this->replaceStack[$token]= $this->data[$name];
+    } else {
+      $this->replaceStack[$token]= '';
+    }
+  }
+
+  function language_other ($token,$name) {
+    if ($this->renderPdf) {
+      if (isset($this->data[$name]) && !empty($this->data[$name])) {
+        $this->replaceStack[$token]= sprintf('<tr>
+        <td id="%1s_label" class="fill-in">%2s</td>
+        <td>%3s</td>
+        <td>%4s</td>
+        <td>%5s</td>
+      </tr>',
+                                            $name,
+                                            $this->data[$name],
+                                            $this->data[$name.'_reading'],
+                                            $this->data[$name.'_speaking'],
+                                            $this->data[$name.'_writing']);
+      } else {
+        $this->replaceStack[$token] = '';
+      }
+    } else {
+      $this->replaceStack[$token] = '';
+    }
+  }
+
+  
+  function language ($token,$name,$label) {
+    if ($this->renderPdf) {
+      if ($this->data[$name.'_reading'] != 'not' || $this->data[$name.'_speaking'] != 'not' || $this->data[$name.'_writing'] != 'not' ) {
+        $this->replaceStack[$token] = sprintf('<tr>
+        <td id="%1s_label">%2s</td>
+        <td>%3s</td>
+        <td>%4s</td>
+        <td>%5s</td>
+      </tr>',
+                                            $name,
+                                            $label,
+                                            $this->data[$name.'_reading'],
+                                            $this->data[$name.'_speaking'],
+                                            $this->data[$name.'_writing']);
+      } else {
+        $this->replaceStack[$token] = '';
+      }
+    } else {
+      $this->replaceStack[$token] = '';
+    }
+  }
+  
+  function fillin ($token,$name,$label='') {
     if ($this->renderPdf) {
 			try {
-				if (isset($this->data[$name]) && !is_null($this->data[$name])) {
-          $this->replaceStack[$token]=$this->data[$name];
-				}
+				if (isset($this->data[$name]) && !empty($this->data[$name])) {
+          $this->replaceStack[$token]= sprintf('<tr>
+        <td class="label" id="%1s_label">
+           %2s
+        </td>
+        <td class="fill-in">
+          %3s
+        </td>
+      </tr>',$name,$label,$this->data[$name]);
+				} else {
+          $this->replaceStack[$token] = '';
+        }
 			} catch (Exception $e){
 				echo $e.' iets met veld '.$name;
 			}
@@ -365,26 +450,26 @@ class form {
     }
   }
 
-  function pdf_create($filename,$content)
+  function pdf_create($filename)
   {
 		try {
 			$dompdf = new DOMPDF();
-			$dompdf->load_html($content);
+			$dompdf->load_html_file($filename.'.html');
 			$dompdf->render();
-			file_put_contents($filename,$dompdf->output());
+			file_put_contents($filename.'.pdf',$dompdf->output());
 		} catch(Exception $e) {
-			die('PDF rendering failed. Please call UISS directly.');
+			die('PDF rendering failed. Please call UISS directly or use the downloadable PDF file on the site.');
 		}
   }
 
-  function debug($data,$title='debug') {
-		echo "<fieldser><legend>$title</legend><pre>";
-    print_r($data);
-    echo "</pre></fieldset>";		
+  function trimData () {
+    // Trim all whitespace from the beginning and the end of the values 
+    // in the data array
+    foreach ($this->data as $key=>$value) {
+      $this->data[$key] = preg_replace(array('/^\s/','/\s$/'),array('',''),$value);
+    }
   }
-  
-  
-  
+    
 }
 
 ?>
