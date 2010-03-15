@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<array>
+  <item>
+    <key>CONV GRAM</key>
+    <value>1. Conversation + Grammar</value>
+  </item>
+  <item>
+    <key>CONV</key>
+    <value>2. Conversation</value>
+  </item>
+  <item>
+    <key>GRAM</key>
+    <value>3. Grammar</value>
+  </item>
+  <item>
+    <key>ARTS</key>
+    <value>4. Arts in Sweden</value>
+  </item>
+  <item>
+    <key>POP</key>
+    <value>5. Swedish Pop Music</value>
+  </item>
+  <item>
+    <key>MSSI</key>
+    <value>6. Modern Swedish Social Institutions</value>
+  </item>
+  <item>
+    <key>DSS</key>
+    <value>7. Det moderna svenska samhället</value>
+  </item>
+  <item>
+    <key>DRAMA</key>
+    <value>8. Förbättra ditt uttal med hjälp av teatermetoden</value>
+  </item>
+</array>
