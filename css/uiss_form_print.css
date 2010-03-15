@@ -1,0 +1,118 @@
+/* 
+	Specially for print purposes 
+*/
+
+body {
+	font-family: "Verdana";
+	font-size: 0.7em;
+}
+
+@page {
+	width:215.9mm !important;
+	margin-bottom: 1.5cm;
+	margin-top: 1cm;
+	margin-right: 0.5cm;
+	margin-left: 0.5cm;
+	orphans: 1;
+	widows: 1;
+}
+
+a:link, a:visited {
+	color: #520;
+	background: transparent;
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+/*
+	Insert the link of the anchor after the link when printing
+*/
+a:link:after, a:visited:after {
+	content: " (" attr(href) ") ";
+	font-size: 90%;
+}
+
+td.logo {
+	background-image:url(/application/images/uiss.gif);
+	background-repeat:no-repeat;
+}
+
+div.fieldset {
+	border: 1px solid black;
+	float:none;
+}
+
+#addresses {
+	visibility:visible;
+}
+
+td {
+	border-collapse: collapse;
+	vertical-align: top;
+	font-size: 1.05em;
+}
+
+th {
+	text-align:left;
+	font-size: 1.05em;
+	font-weight:bolder;
+}
+
+table {
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+	border: thin black solid;
+}
+
+#container {
+	visibility: visible;
+}
+
+td.fill-in, span.fill-in {
+	border-bottom-width: 0px;
+	border-bottom-style: none;
+}
+
+td.label {
+	font-size: 1.05em;
+	font-weight: bolder;
+}
+
+p.attend {
+	font-weight: bold;
+}
+
+p.remark, td.remark {
+	font-size: 0.7em;
+	color: #FF0000;
+}
+
+p {
+	padding-left: 5px;
+}
+
+p.disclaimer {
+	color: red;
+}
+
+span.small {
+	font-size: 0.7em;
+}
+
+td.sup, tr.sup {
+	line-height: normal;
+}
+
+.foutje {
+	color: red;
+	display: none;
+}
+
+h1 {
+	font-size:22px;
+}
+
+h2 {
+	font-size:14px;
+}

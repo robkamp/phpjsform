@@ -1,0 +1,125 @@
+#uissform {
+	height: 500px;
+	visibility:visible;
+}
+
+
+td.logo {
+	background-image:url(../images/uiss.gif);
+	background-repeat:no-repeat;
+}
+
+fieldset {
+	position: absolute;
+	top: 80px;
+	margin-top: 10px;
+	visibility: hidden;
+}
+
+div#errors {
+	position: absolute;
+	bottom: 130px;
+	left: 20px;
+	}
+
+div#formnav {
+	position: absolute;
+	bottom: 60px;
+	left: 20px;
+	}
+
+#addresses {
+	visibility:visible;
+	elevation:above;
+}
+
+td {
+	border-collapse: separate;
+	vertical-align: top;
+}
+
+th {
+	text-align:left;
+	font-size: 1.0em;
+}
+
+table {
+	width: 60em;
+	margin: 0px;
+	padding: 0px;
+	line-height: 1.4em;
+}
+table table {
+	width:auto;
+}
+body {
+	font-family: "Verdana";
+	font-size: 0.8em;
+}
+td.fill-in, span.fill-in {
+	border-bottom-color: black;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+td.label {
+	font-size: 0.7em;
+	font-weight: 700;
+	line-height: 0.7em;
+	padding-bottom: 10px;
+}
+p.attend {
+
+}
+p.remark, td.remark {
+	font-size: 0.7em;
+	color: #FF0000;
+}
+p {
+	padding-left: 5px;
+}
+p.disclaimer {
+	color: red;
+}
+span.small {
+	font-size: 0.7em;
+}
+td.sup, tr.sup {
+	line-height: normal;
+}
+#e-mail {
+	width: 60em;
+}
+#photo {
+	width: 60em;
+}
+
+.foutje {
+	color: red;
+}
+
+
+/* located in demo.css and creates a little calendar icon
+ * instead of a text link for "Choose date"
+ */
+a.dp-choose-date {
+	float: left;
+	width: 16px;
+	height: 16px;
+	padding: 0;
+	margin: 5px 3px 0;
+	display: block;
+	text-indent: -2000px;
+	overflow: hidden;
+	background: url(../images/calendar.png) no-repeat; 
+}
+a.dp-choose-date.dp-disabled {
+	background-position: 0 -20px;
+	cursor: default;
+}
+/* makes the input field shorter once the date picker code
+ * has run (to allow space for the calendar icon
+ */
+input.dp-applied {
+	width: 140px;
+	float: left;
+}

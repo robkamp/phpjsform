@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<array default="not">
+	<item>
+		<key>not</key>
+		<value>Not</value>
+	</item>
+	<item>
+		<key>good</key>
+		<value>Good</value>
+	</item>
+	<item>
+		<key>fair</key>
+		<value>Fair</value>
+	</item>
+	<item>
+		<key>fluent</key>
+		<value>Fluent</value>
+	</item>
+</array>
