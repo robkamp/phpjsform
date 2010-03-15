@@ -1,8 +1,8 @@
 <?php
 
-	error_reporting(E_ALL);
+  error_reporting(E_ALL);
 
-	define('APPLICATION_PATH','/application/');
+  define('APPLICATION_PATH','/application/');
   define('RELATIVE_PATH',$_SERVER['DOCUMENT_ROOT'].APPLICATION_PATH);
 
   require_once(RELATIVE_PATH .'classes/class.utils.php');
@@ -12,11 +12,7 @@
     echo '<html><body><h1>We are temporarily offline. Please excuse us for the inconvencience.</h1></body></html>';
   } else {
 
-    $form = new form(RELATIVE_PATH .'html/formulier_template_v07.html',
-                     RELATIVE_PATH .'html/finished_template_v05.html',
-                     RELATIVE_PATH .'pdf/pdf_template_v09.html',
-                     RELATIVE_PATH .'email/email_template_student.html',
-                     RELATIVE_PATH .'email/email_template_director.html');
+    $form = new form();
 
     session_cache_limiter('private'); // Set the cache limiter to private
     session_cache_expire(30); // set the cache expire to 30 minutes

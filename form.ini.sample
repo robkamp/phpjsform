@@ -1,0 +1,13 @@
+[e-mail]	
+director=email@address.com
+
+[forms]
+form=html/formulier_template.html
+finished=html/finished_template.html
+pdf=pdf/pdf_template.html
+email_student=email/email_template_student.html
+email_director=email/email_template_director.html
+
+[info]
+debuginfo=<p class="disclaimer">Debugging mode. Session number is "%s".</p>
+iedisclaimer=<p class="disclaimer">Please note: this online application form might not work with Internet Explorer 7 or lower.</p>
