@@ -11,9 +11,9 @@
 		}
 
 		static function debug ($data,$title='debug') {
-			echo sprintf('<div style="float: right;"><fieldset><legend>%s</legend><pre>',$title);
-			print_r($data);
-			echo '</pre></fieldset></div>';
+      $print_r = print_r($data);
+      error_log ( sprintf('%s: %s',$title,$print_r),0);
+      echo sprintf('<div style="float: right;"><fieldset><legend>%s</legend><pre>%s</pre></fieldset></div>',$title,$print_r);
 		}
     
     static function removeAccent($str) 

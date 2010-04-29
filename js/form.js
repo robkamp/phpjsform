@@ -2,25 +2,26 @@
 var errorLabels = new Array();
 var errors = new Array();
 var mandatory = new Array();
-var numSteps=11;
+var numSteps=12;
 var photouploaded=0;
 mandatory[2] = [ "correct_answers" ];
 mandatory[4] = [ "family_name", "first_name", "date_of_birth", "street","zip_code", "city", "telephone" ];
+mandatory[6] = [ "family_name", "first_name", "date_of_birth", "street","zip_code", "city", "telephone" ];
 
 var checkboxes = new Array();
-checkboxes[11] = [ "disclaimer", "agree_and_pay" ];
+checkboxes[12] = [ "disclaimer", "agree_and_pay" ];
 
 var comboboxes = new Array();
 comboboxes[3] = [ "sessions", "morning" ];
 comboboxes[4] = [ "country", "nationality", "title" ];
 
 var languages = new Array();
-languages[8] = [ "english_reading", "english_speaking", "english_writing",
+languages[9] = [ "english_reading", "english_speaking", "english_writing",
 		"german_reading", "german_speaking", "german_writing",
 		"swedish_reading", "swedish_speaking", "swedish_writing" ];
 var stepId = 1;
 
-function submit() {
+function localsubmit() {
 	if (validate()) {
 		document.forms['uissform'].submit();
 	}
@@ -51,7 +52,9 @@ function validate() {
 	if (stepId == 5) {
 		checkPhoto();
 	}
-
+	if (stepId == 6) {
+		checkTuitionOnly();
+	}
 	if (errors.length > 0) {
 		showErrors();
 	} else {
@@ -63,12 +66,16 @@ function validate() {
 
 function showErrors() {
 
-	errorDiv = document.getElementById('errors');
-	errorDiv.innerHTML = '<p class="error">Some errors have occurred, please check the form.</p><p>' + errors
-			.join('<br/>') + '</p>';
+  var errortext = errors.join('<br/>');
 
-	// window.alert('Some errors have occurred, please check the
-	// form.\n\n'+errors.join("</p><br><p>"));
+  $("<div></div>").html(errortext)
+                  .dialog({ title: 'Please correct the following errors',
+                            modal: true,
+                            resizable: false,
+                            dialogClass: 'alert',
+                            show: 'blind'
+                          });
+			   
 }
 
 function resetLabels(parent) {
@@ -98,8 +105,7 @@ function checkMandatory() {
 			field = document.getElementById(mandatory[stepId][i]);
 			if (field != null) {
 				if (field.value == "") {
-					errors.push("You must enter a value for "
-							+ mandatory[stepId][i]);
+					errors.push("You must enter a value for " + mandatory[stepId][i]);
 					setError(mandatory[stepId][i] + '_label');
 				}
 			} else {
@@ -193,7 +199,12 @@ function checkStateIfUs() {
 function checkStudentLevel() {
 	if (getCheckedValue(document.forms['uissform'].elements['studentlevel']) == "") {
 		errors.push("You have to select a student level");
-		setError("studentlevel_label");
+	}
+}
+
+function checkTuitionOnly() {
+	if (getCheckedValue(document.forms['uissform'].elements['tuition_only']) == "") {
+		errors.push("You have to select a whether you need boarding");
 	}
 }
 
@@ -246,8 +257,12 @@ function next() {
 		if (oldStep==1 && getCheckedValue(document.forms['uissform'].elements['studentlevel'])=='beginner') {
 		  newStep = 3;
 		} else {
-		  newStep = Math.min(numSteps, stepId + 1);
-		}
+      if (oldStep==6 && getCheckedValue(document.forms['uissform'].elements['tuition_only'])=='yes') {
+        newStep = 8;
+      } else {
+        newStep = Math.min(numSteps, stepId + 1);
+      }
+    }
 		if (oldStep != newStep) {
 			hideStep(oldStep);
 			showStep(newStep);
@@ -261,8 +276,12 @@ function back() {
 	if (oldStep==3 && getCheckedValue(document.forms['uissform'].elements['studentlevel'])=='beginner') {
 	  newStep = 1;
 	} else {
-	  newStep = Math.max(1, stepId - 1);
-	}
+    if (oldStep==8 && getCheckedValue(document.forms['uissform'].elements['tuition_only'])=='yes') {
+      newStep = 6;
+    } else {
+      newStep = Math.max(1, stepId - 1);
+    }
+  }
 	if (oldStep != newStep) {
 		hideStep(oldStep);
 		showStep(newStep);
@@ -271,41 +290,56 @@ function back() {
 }
 
 function navigation(stepId) {
-	step = document.getElementById('back');
 	if (stepId == 1) {
-		step.style.visibility = 'hidden';
-		step.style.display = 'none';
+    $("#back").hide();
 	} else {
-		step.style.visibility = 'visible';
-		step.style.display = 'inline';
+    $("#back").show();
 	}
-	step = document.getElementById('next');
 	if (stepId == numSteps) {
-		step.style.visibility = 'hidden';
-		step.style.display = 'none';
-		step = document.getElementById('submit');
-		step.style.visibility = 'visible';
-		step.style.display = 'inline';
+		$("#next").hide();
+		$("#submit").show();
 	} else {
-		step.style.visibility = 'visible';
-		step.style.display = 'inline';
-		step = document.getElementById('submit');
-		step.style.visibility = 'hidden';
-		step.style.display = 'none';
+		$("#next").show();
+		$("#submit").hide();
 	}
-	errorDiv = document.getElementById('errors');
-	errorDiv.innerHTML = '';
 }
+
+function showStep(stepId) {
+
+	navigation(stepId);
+  $('#step' + stepId).show('blind');
+
+}
+
 
 function hideStep(stepId) {
-	step = document.getElementById('step' + stepId);
-	step.style.visibility = 'hidden';
-	step.style.display = 'none';
 	navigation(stepId);
+  $('#step'+stepId).hide('blind');
 }
 
-function onLoad() {
-  showStep(1);
+
+$(function() {
+
+  $(".date-pick").datepicker({
+      dateFormat: 'yy-mm-dd',
+      firstDay: 1,
+      showOn: 'button',
+      showAnim: 'blind',
+			buttonImage: '../images/calendar.png',
+			buttonImageOnly: true,
+			minDate: '1900-01-01',
+      changeYear: true,
+			endDate: (new Date()).asString()
+	});
+  
+  $(".fieldset").addClass("ui-widget-content");
+  $(".fieldset").addClass("ui-corner-all");
+  $(".fieldset").addClass("positionable");
+  $(".fieldset").hide();
+
+  $(".legend").addClass("ui-widget-header");
+  $(".legend").addClass("ui-corner-all");
+
   new AjaxUpload('photoarea', 
 				 				 {action: 'ajaxupload.php', 
 									autoSubmit: true,
@@ -334,11 +368,16 @@ function onLoad() {
 										photouploaded=1;
 									},
 					});
-}
 
-function showStep(stepId) {
-	step = document.getElementById('step' + stepId);
-	step.style.visibility = 'visible';
-	step.style.display = 'block';
-	navigation(stepId);
-}
+  $("#next").click(function() { return next(); });
+
+  $("#back").click(function() { return back(); });
+  
+  $("#submit").click(function() { return localsubmit(); });  
+
+  $("#next").button({label: 'next'});
+  $("#back").button({label: 'back'});
+  $("#submit").button({label: 'submit'});
+
+  showStep(1);
+});

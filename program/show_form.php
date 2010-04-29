@@ -8,7 +8,7 @@
   require_once(RELATIVE_PATH .'classes/class.utils.php');
   require_once(RELATIVE_PATH .'classes/class.form.php');    
 
-  if (!isset($_REQUEST['debug'])&&file_exists(RELATIVE_PATH.'OFFLINE')) {
+  if (!isset($_REQUEST['debug']) && file_exists(RELATIVE_PATH.'OFFLINE')) {
     echo '<html><body><h1>We are temporarily offline. Please excuse us for the inconvencience.</h1></body></html>';
   } else {
 

@@ -1,203 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
-<array>
-	<item>
+<usstates>
+	<usstate>
 		<key>AL</key>
 		<value>Alabama</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>AK</key>
 		<value>Alaska</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>AZ</key>
 		<value>Arizona</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>AR</key>
 		<value>Arkansas</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>CA</key>
 		<value>California</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>CO</key>
 		<value>Colorado</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>CT</key>
 		<value>Connecticut</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>DE</key>
 		<value>Delaware</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>FL</key>
 		<value>Florida</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>GA</key>
 		<value>Georgia</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>HI</key>
 		<value>Hawaii</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>ID</key>
 		<value>Idaho</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>IL</key>
 		<value>Illinois</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>IN</key>
 		<value>Indiana</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>IA</key>
 		<value>Iowa</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>KS</key>
 		<value>Kansas</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>KY</key>
 		<value>Kentucky</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>LA</key>
 		<value>Louisiana</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>ME</key>
 		<value>Maine</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>MD</key>
 		<value>Maryland</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>MA</key>
 		<value>Massachusetts</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>MI</key>
 		<value>Michigan</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>MN</key>
 		<value>Minnesota</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>MS</key>
 		<value>Mississippi</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>MO</key>
 		<value>Missouri</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>MT</key>
 		<value>Montana</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>NE</key>
 		<value>Nebraska </value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>NV</key>
 		<value>Nevada</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>NH</key>
 		<value>New Hampshire</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>NJ</key>
 		<value>New Jersey</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>NM</key>
 		<value>New Mexico</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>NY</key>
 		<value>New York</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>NC</key>
 		<value>North Carolina</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>ND</key>
 		<value>North Dakota</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>OH</key>
 		<value>Ohio</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>OK</key>
 		<value>Oklahoma</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>OR</key>
 		<value>Oregon</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>PA</key>
 		<value>Pennsylvania</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>RI</key>
 		<value>Rhode Island</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>SC</key>
 		<value>South Carolina</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>SD</key>
 		<value>South Dakota</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>TN</key>
 		<value>Tennessee</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>TX</key>
 		<value>Texas</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>UT</key>
 		<value>Utah</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>VT</key>
 		<value>Vermont</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>VA</key>
 		<value>Virginia</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>WA</key>
 		<value>Washington</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>WV</key>
 		<value>West Virginia</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>WI</key>
 		<value>Wisconsin</value>
-	</item>
-	<item>
+	</usstate>
+	<usstate>
 		<key>WY</key>
 		<value>Wyoming</value>
-	</item>
-</array>
+	</usstate>
+</usstates>

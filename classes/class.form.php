@@ -9,12 +9,12 @@ define('DATA_PATH','data/');
 define('TEMP_PATH','tmp/');
 
 class form {
-  private $content;
   private $renderPdf=false;
   private $data;
   private $keywords=array('language','language_other','data','checkbox','radioset','datepicker','fill-in','dropdown','fileupload','submit','location','debug','disclaimer');
   private $errors=array();
   private $replaceStack=array();
+  private $replaceMail=array();
   private $countries;
   private $sessions;
   private $location;
@@ -31,22 +31,24 @@ class form {
   
   function __construct() {
   
-	// Load the ini file for this form
-	$settings = parse_ini_file (RELATIVE_PATH.'/form.ini', true);
-	
-	$this->form = RELATIVE_PATH.$settings['forms']['form'];
-	$this->pdf = RELATIVE_PATH.$settings['forms']['pdf'];
-	$this->finished = RELATIVE_PATH.$settings['forms']['finished'];
-	$this->htmlmailstudent = RELATIVE_PATH.$settings['forms']['email_student'];
-	$this->htmlmaildirector = RELATIVE_PATH.$settings['forms']['email_director'];
-	
+  // Load the ini file for this form
+  $settings = parse_ini_file (RELATIVE_PATH.'/form.ini', true);
+  
+  $this->form = RELATIVE_PATH.$settings['forms']['form'];
+  $this->pdf = RELATIVE_PATH.$settings['forms']['pdf'];
+  $this->finished = RELATIVE_PATH.$settings['forms']['finished'];
+  $this->htmlmailstudent = RELATIVE_PATH.$settings['forms']['email_student'];
+  $this->htmlmaildirector = RELATIVE_PATH.$settings['forms']['email_director'];
+  
     if (file_exists($this->form) && 
-	    file_exists($this->pdf) && 
-		file_exists($this->finished) && 
-		file_exists($this->htmlmailstudent)&& 
-		file_exists($this->htmlmaildirector)) {
+        file_exists($this->pdf) && 
+        file_exists($this->finished) && 
+        file_exists($this->htmlmailstudent)&& 
+        file_exists($this->htmlmaildirector)) {
+
       $this->filename = '';
       $this->location = sprintf('http://%s%s',$_SERVER['SERVER_NAME'],APPLICATION_PATH);
+    
       $this->fluency1 = new dataArray('fluency1');
       $this->fluency2 = new dataArray('fluency2');
       $this->titles = new dataArray('titles');
@@ -57,7 +59,9 @@ class form {
       $this->afternoon1 = new dataArray('afternoon1');
       $this->afternoon2 = new dataArray('afternoon2');
       $this->morning = new dataArray('morning');
-	  $this->emailSettings['from'] = $settings['e-mail']['director'];
+
+      $this->emailSettings['from'] = $settings['e-mail']['director'];
+    
     } else {
       die(sprintf("One of the following forms does not exist %s, %s, %s, %s, %s",$this->form,$this->pdf,$this->finished,$this->htmlmailstudent,$this->htmlmaildirector));
     }
@@ -76,12 +80,12 @@ class form {
 
         $this->renderPdf=true; // This time around we render the PDF
 
-		// TODO: Provide a hook to do the stuff below
+    // TODO: Provide a hook to do the stuff below
 
         // prepare the filename without special characters
         $this->filename = utils::postSlug(sprintf('%s_%s_%s_%s',$_SESSION['DATETIME'],$this->data['family_name'],$this->data['first_name'],$this->data['date_of_birth'])); 
         $this->filename = sprintf('%s%s',DATA_PATH,$this->filename); // prepend the path for the data directory
-		
+    
         // Now that we are rendering the PDF we should move 
         // the image from its temporary name to its final name
         // rename (RELATIVE_PATH.DATA_PATH.$_SESSION['GUID'].'.jpg',RELATIVE_PATH.$this->filename.'.jpg');
@@ -105,7 +109,7 @@ class form {
     $this->data['cache_expire']=session_cache_expire(); // when should the session expire 
     $this->data['HTTP_USER_AGENT']=$_SERVER['HTTP_USER_AGENT']; // what agent did connect to us
     
-	if (isset($_REQUEST['debug'])&&$_REQUEST['debug']=='2wsxCDE') { // Debugging mode only with a password
+  if (isset($_REQUEST['debug'])&&$_REQUEST['debug']=='2wsxCDE') { // Debugging mode only with a password
       $this->debug = true; // Debugging is on
     }
 
@@ -256,7 +260,7 @@ class form {
   function sendMailStudent($pdffile) {
 
     $content = file_get_contents($this->htmlmailstudent);
-    foreach ($this->replaceStack as $search=>$replace) {
+    foreach ($this->replaceMail as $search=>$replace) {
       $content=str_replace('{'.$search.'}',$replace,$content);
     }      
 
@@ -282,7 +286,7 @@ class form {
 
   function sendMailDirector($pdffile,$datfile,$photo) {
     $content = file_get_contents($this->htmlmaildirector);
-    foreach ($this->replaceStack as $search=>$replace) {
+    foreach ($this->replaceMail as $search=>$replace) {
       $content=str_replace('{'.$search.'}',$replace,$content);
     }      
 
@@ -344,6 +348,7 @@ class form {
           $this->replaceStack[$token]=$this->$combobox->printValue($this->data[$name]);
         } else {
           $this->replaceStack[$token]=sprintf('<tr><th>%s</th><td>%s</td></tr>',$label,$this->$combobox->printValue($this->data[$name]));
+          $this->replaceMail[$token]=$this->$combobox->printValue($this->data[$name]);
         }
       } else {
         $this->replaceStack[$token]='';
@@ -351,9 +356,9 @@ class form {
     } else {
       $options=$this->$combobox->options($default);
       if ($label=='') {
-        $this->replaceStack[$token]=sprintf('<select id="%1$s" name="%1$s">%2$s</select>',$name,$options);
+        $this->replaceStack[$token]=sprintf('<select class="dropdown" id="%1$s" name="%1$s">%2$s</select>',$name,$options);
       } else {
-        $this->replaceStack[$token]=sprintf('<label id="%1$s_label">%3$s<select id="%1$s" name="%1$s">%2$s</select></label>',$name,$options,$label);
+        $this->replaceStack[$token]=sprintf('<label id="%1$s_label">%2$s<select class="dropdown" id="%1$s" name="%1$s">%3$s</select></label>',$name,$label,$options);
       }
     }
   }
@@ -448,6 +453,7 @@ class form {
           %3s
         </td>
       </tr>',$name,$label,$this->data[$name]);
+          $this->replaceMail[$token]= $this->data[$name];
         } else {
           $this->replaceStack[$token] = '';
         }

@@ -3,29 +3,16 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Application to Uppsala International Summer Session 2009</title>
+<link rel="stylesheet" type="text/css" href="../css/ui-lightness/jquery-ui-1.8.custom.css" />
 <link rel="stylesheet" href="../css/uiss_form.css" type="text/css" media="all" />
-<link rel="stylesheet" href="../css/datePicker.css" type="text/css" media="all" />
-<script src="../js/form.js" type="text/javascript"></script>
-<script type="text/javascript" src="../js/jquery-1.2.6.min.js"></script>
+<script type="text/javascript" src="../js/jquery-1.4.2.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.8.custom.js"></script>
+<script  type="text/javascript"src="../js/ajaxupload.3.0.js"></script>
+<script type="text/javascript" src="../js/form.js"></script>
 <script type="text/javascript" src="../js/date.js"></script>
-<script type="text/javascript" src="../js/jquery.datePicker.js"></script>
-<script src="../js/ajaxupload.3.0.js" type="text/javascript"></script>
-
-<script language="javascript"> 
-$(function()
-{
-	$('.date-pick').datePicker(
-		{
-			
-			startDate: '1900-01-01',
-			endDate: (new Date()).asString()
-		}
-	);
-});
-</script>
 
 </head>
-<body onload="onLoad();">
+<body>
 	<h1>Application to Uppsala International Summer Session 2010</h1>
 	{disclaimer}
   {debug}
@@ -33,39 +20,39 @@ $(function()
 	<form action="#" method="post" enctype="multipart/form-data" name="uissform" id="uissform" onsubmit="return validate();">
 	<div id="fieldsets">
 
-	<fieldset id="step1"><legend style="font-weight: bold; font-size: 15px;">Placement test</legend>
+	<div class="fieldset" id="step1"><div class="legend">Level</div> <!-- legend -->
       <p class="attend">A placement test, provided by Folksuniversitetet, is used to determine your 
 	                    current level.<br/> 
 						This is not necessary for absolute beginners.
 						<br/><br/>
 	                    If you are no beginner, please take the placement test before
 	                    filling in this application form.<br/>
-						<a href="http://www.folkuniversitetet.se/templates/PageFrame.aspx?id=19417">Click here to proceed to the placement test of Folksuniversitetet (you will leave this site).</a></p>
+						<a href="http://www.folkuniversitetet.se/templates/PageFrame.aspx?id=19417">Click here to proceed to the placement test of Folksuniversitetet (you will leave this site).</a><br/>
 						
         {radioset studentlevel beginner I am a beginner}<br/>
         {radioset studentlevel advanced I am no beginner and I have taken the placement test}<br/>
 	  </p>
-    </fieldset>
+    </div> <!-- fieldset -->
 	
-	<fieldset id="step2"><legend style="font-weight: bold; font-size: 15px;">Placement test</legend>
+	<div class="fieldset" id="step2"><div class="legend">Placement test</div> <!-- legend -->
       <p class="attend">
         My number of <span id="correct_answers_label">correct answers</span> = <span class="fill-in">{fill-in correct_answers}</span> in <span id="level_label">level</span>
         <label>{radioset level A Level A}</label>
         <label>{radioset level B Level B}</label>
         <label>{radioset level C Level C}</label>
 	  </p>
-    </fieldset>
+    </div> <!-- fieldset -->
 
-	<fieldset id="step3"><legend style="font-weight: bold; font-size: 15px;">Participation</legend>
+	<div class="fieldset" id="step3"><div class="legend">Participation</div> <!-- legend -->
 	  <p class="attend">{dropdown sessions sessions choose I wish to attend the:}</p>
 	  <p class="attend">{dropdown morning morning choose I wish to participate in the following morning course:}</p>
 	  <p class="attend">{dropdown afternoon1 afternoon1 choose I wish to participate in the following afternoon course (June 20 - July 16): }</p>
 	  <p class="attend">{dropdown afternoon2 afternoon2 choose I wish to participate in the following afternoon course (July 18 - August 13): }</p>
-	</fieldset> 
+	</div> <!-- fieldset --> 
 	
-	<input type="hidden" name="sendtouiss" value="sendtouiss"></input>	
+	<input type="hidden" name="sendtouiss" value="sendtouiss"/>	
 	
-	<fieldset id="step4"><legend style="font-weight: bold; font-size: 15px;">Name and address</legend>
+	<div class="fieldset" id="step4"><div class="legend">Name and address</div> <!-- legend -->
 	  <table>
 		<tr>
           <td class="fill-in">{dropdown title titles choose}</td>
@@ -124,15 +111,31 @@ $(function()
           <td class="label">Major department</td>
         </tr>
       </table>
-    </fieldset>
+    </div> <!-- fieldset -->
     
-    <fieldset id="step5"><legend style="font-weight: bold; font-size: 15px;">Photo</legend>
+    <div class="fieldset" id="step5"><div class="legend">Photo</div> <!-- legend -->
 	  <p> Please upload a picture of yourself. This picture will be used for your student id card.</p>
-    <p> To start uploading your photo please click on the area below.</p>
+    <p> To start uploading please click on the area below.</p>
       {fileupload photo}
-	</fieldset>
+	  <p class="disclaimer">WARNING: only proceed to the next page if you have uploaded and <br/>
+	                      can see your picture!</p>
+
+
+	</div> <!-- fieldset -->
+
+	<div class="fieldset" id="step6"><div class="legend">Boarding or tuition only</div> <!-- legend -->
+      <table>
+        <tr>
+          <td>{radioset tuition_only yes I wish to attend the program 'tuition only' 13.000 SEK per 4 weeks, 6.700 SEK per 2 weeks}</td>
+        </tr>
+        <tr>
+          <td>{radioset tuition_only no I would like to see the boarding options}</td>
+        </tr>
+      </table>
+	</div> <!-- fieldset -->
+
 	
-	<fieldset id="step6"><legend style="font-weight: bold; font-size: 15px;">I wish to reside in a</legend>
+	<div class="fieldset" id="step7"><div class="legend">I wish to reside in a</div> <!-- legend -->
       <table>
         <tr>
           <td>{radioset accommodation SINGLE single room}</td>
@@ -162,22 +165,22 @@ $(function()
           <td>{radioset accommodation 6 I will arrange my own accommodation, reduction in cost 3.000 SEK per 4-week period}</td>
         </tr>
         <tr>
+          <td>{radioset accommodation 7 apartment, single occupancy or with non-participant partner: 4.000 SEK per 4 weeks, 2.400 SEK per 2 weeks}</td>
+        </tr>
+        <tr>
+          <td>{radioset accommodation 8 apartment, shared with participating friend, partner or other student: 1.500 SEK per person per 4 weeks}</td>
+        </tr>
+        <tr>
           <td class="sup remark"><sup>*</sup> extra costs</td>
         </tr>
-        <tr>
-          <td></td>
-        </tr>
-        <tr>
-          <td>{checkbox car arrival with my car}</td>
-        </tr>
       </table>
-    </fieldset>
+    </div> <!-- fieldset -->
     
     
-	<fieldset id="step7"><legend style="font-weight: bold; font-size: 15px;">Special wishes</legend>
+	<div class="fieldset" id="step8"><div class="legend">Special wishes</div> <!-- legend -->
       <table>
         <tr>
-          <td>{checkbox special_tuition I wish to attend the program 'tuition only' 13.000 SEK per 4 weeks, 6.700 SEK per 2 weeks}</td>
+          <td>{checkbox car I will arrive with my car}</td>
         </tr>
         <tr>
           <td>{checkbox special_vegetarian I would like to request vegetarian meels}
@@ -185,9 +188,9 @@ $(function()
             {radioset vegetarion fish with fish}</td>
         </tr>
       </table>
-    </fieldset>
+    </div> <!-- fieldset -->
 
-	<fieldset id="step8"><legend style="font-weight: bold; font-size: 15px;">Proficiency in languages</legend>
+	<div class="fieldset" id="step9"><div class="legend">Proficiency in languages</div> <!-- legend -->
       <table>
         <tr>
           <th>Language</th>
@@ -232,9 +235,9 @@ $(function()
           <td class="label">Extra language two</td>
         </tr>
       </table>
-    </fieldset>
+    </div> <!-- fieldset -->
 
-	<fieldset id="step9"><legend style="font-weight: bold; font-size: 15px;">Activities</legend>
+	<div class="fieldset" id="step10"><div class="legend">Activities</div> <!-- legend -->
       <p class="attend">The following activities, excursions or lodging involve extra costs. Please mark the ones you would like:</p>
       <table>
         <tr>
@@ -259,23 +262,14 @@ $(function()
           <td>{checkbox activities_3_3 hiking}</td>
         </tr>
         <tr>
-          <td colspan="2">{checkbox activities_4 apartment, single occupancy or with non-participant partner: 4.000 SEK per 4 weeks, 2.400 SEK per 2 weeks}</td>
-        </tr>
-        <tr>
-          <td colspan="2">{checkbox activities_5 apartment, shared with participating friend, partner or other student: 1.500 SEK per person per 4 weeks}</td>
-        </tr>
-        <tr>
-          <td></td>
-        </tr>
-        <tr>
           <td colspan="2"><div class="remark"> The non-refundable deposit for the optional trips and the costs for the apartment should be paid together with the advance course payment of 5.000 SEK. The remaining costs should be paid with the final course fee payment.
               <p></p>
           </div></td>
         </tr>
       </table>
-    </fieldset>
+    </div> <!-- fieldset -->
 
-	<fieldset id="step10"><legend style="font-weight: bold; font-size: 15px;">How did you hear about the Uppsala program?</legend>
+	<div class="fieldset" id="step11"><div class="legend">How did you hear about the Uppsala program?</div> <!-- legend -->
       <table>
         <tr>
           <td colspan="2"><label>{checkbox heard_1 Have known about it for several years and have been waiting for the opportune time to apply}</label></td>
@@ -301,22 +295,22 @@ $(function()
           <td class="fill-in">{fill-in heard_requested}</td>
         </tr>
       </table>
-    </fieldset>
+    </div> <!-- fieldset -->
 	
-	<fieldset id="step11"><legend style="font-weight: bold; font-size: 15px;">Disclaimer and agreement</legend>
+	<div class="fieldset" id="step12"><div class="legend">Disclaimer and agreement</div> <!-- legend -->
       <p id="disclaimer_label">{checkbox disclaimer I understand that the UISS program arrangements, including the course offerings, may be subject to minor modifications}</p>
       <p id="agree_and_pay_label">{checkbox agree_and_pay I have paid a non-refundable application fee of $50 or €30 to complete my application}</p>
       <!-- div id="captcha"> {captcha} </div -->
-    </fieldset>
-    </div>
-
-	<div id="errors">
-	</div>
+  </div> <!-- fieldset -->
 	<div id="formnav">
-	<a id="back" href="#" onclick="back();">back</a>
-	<a id="next" href="#" onclick="next();">next</a>
-	<a id="submit" href="#" onclick="submit();">submit</a>
+    <div id="buttonholder">
+      <a href="#" id="back"></a>
+      <a href="#" id="next"></a>
+      <a href="#" id="submit"></a>
+    </div>
 	</div>
+</div>
+
 	</form>
 </body>
 </html>

@@ -3,18 +3,20 @@
   class csvHandler {
     
     protected $data = array();
+    protected $table = '';
+    protected $options = '';
     private $default = '';
-    private $csvFile = '';
     
-    function __construct ($csvFile) { // Constructor method always pass a file
-      $this->load($csvFile);
+    function __construct ($table) { // Constructor method always pass a file
+      $this->load($table);
     }
     
-    private function load ($csvFile) {
-      if (file_exists($csvFile)) { // If the file exists parse it
+    private function load ($table) {
+      $this->table = $table;
+      $file = RELATIVE_PATH.'config/'.$this->table.'.csv';
+      if (file_exists($file)) { // If the file exists parse it
 
-        $this->csvFile = $csvFile;
-        $csvData = file_get_contents($this->csvFile);
+        $csvData = file_get_contents($file);
         $csvRecords = preg_split('/\r\n|\r/',$csvData);
         
         // Now get the first line of the data
@@ -22,11 +24,11 @@
         if ($this->hasDefault($csvRecords)) {
           $this->loadWithDefault($csvRecords);
         } else {
-          $this->loadWithoutDefault($csvRecords);
           $this->data['choose'] = 'Choose';
+          $this->loadWithoutDefault($csvRecords);
         }
       } else {
-        trigger_error(sprintf('CSV file %s does not exist',$csvFile),E_USER_ERROR);
+        trigger_error(sprintf('CSV file %s does not exist',$file),E_USER_ERROR);
       }
     }
 

@@ -1,17 +1,21 @@
 <?php
 
-  require_once(RELATIVE_PATH.'classes/class.csvhandler.php');  
+  require_once(RELATIVE_PATH.'classes/class.xmlarray.php');  
 
-  class dataArray extends csvHandler {
-    
+  class dataArray extends xmlArray {
+
     function __construct($table) {
-      parent::__construct(RELATIVE_PATH.'config/'.$table.'.csv');
+      parent::__construct($table);
     }
-    
-    function options($selected='choose') {
-      $options='';
+
+    function getJsonOptions() {
+      return json_encode($this->data);
+    }
+
+    function options() {
+      $options = '';
       foreach ($this->data as $key=>$value) {
-        $options.=sprintf('<option%s value="%s">%s</option>',($selected==$key?' selected':''),$key,$value);
+        $options.=sprintf('<option value="%1$s">%2$s</option>',$key,$value);
       }
       return $options;
     }
