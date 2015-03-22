@@ -1,0 +1,1 @@
+This PHP/JS form parses a coded html form and generates an email to the enlistee and a specific recipient of the form.
