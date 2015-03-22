@@ -1,0 +1,1 @@
+In operation it is necesary to install dompdf. Any version should do.
